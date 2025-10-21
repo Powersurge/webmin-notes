@@ -28,6 +28,10 @@ sub list_notes
         $lnum++;
     }
     close(CONF);
+
+    # Sort notes alphabetically by title (case-insensitive)
+    @rv = sort { lc($a->{'title'}) cmp lc($b->{'title'}) } @rv;
+
     return @rv;
 }
 
