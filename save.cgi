@@ -25,8 +25,8 @@ if ($in{'delete'}) {
 	$in{'title'} =~ /^[A-Za-z0-9\-\_\.\[\]\(\)\%\&\!\?\/\,\s]+$/i ||
 		error($text{'save_etitle'});
 
-	$in{'content'} =~ /^[A-Za-z0-9\-\_\.\[\]\(\)\%\&\!\?\/\,\s]+$/i ||
-		error($text{'save_econtent'});
+#	$in{'content'} =~ /^[A-Za-z0-9\-\_\.\[\]\(\)\%\&\!\?\/\,\s]+$/i ||
+#		error($text{'save_econtent'});
 	
 	$note->{'status'} = $in{'status'};
 	$note->{'style'} = $in{'style'};
