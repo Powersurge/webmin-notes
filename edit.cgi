@@ -40,7 +40,7 @@ print ui_table_row($text{'edit_title'},
 	ui_textbox('title', $note->{'title'}, 40));
 
 print ui_table_row($text{'edit_content'},
-	ui_textbox('content', $note->{'content'}, 40));
+	ui_textarea('content', $note->{'content'}, 8, 40));
 
 print ui_table_end();
 
