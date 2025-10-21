@@ -3,48 +3,52 @@ init_config();
 
 sub list_notes
 {
-	my @rv;
-	my $lnum = 0;
+    my @rv;
+    my $lnum = 0;
 
-	open(CONF, $config{'notes_conf'});
+    open(CONF, $config{'notes_conf'});
 
-	while(<CONF>) {
-		s/\r|\n//g;
-		s/#.*$//;
-		my ($status, $style, $title, $content) = split(/\|/, $_);
+    while(<CONF>) {
+        s/\r//g;     # remove carriage returns only
+        chomp;       # remove newline at end of line
+        s/#.*$//;    # remove comments
 
-		if($content){
+        my ($status, $style, $title, $content) = split(/\|/, $_, 4);  # split max 4 parts
 
-			push(@rv, { 
-				'status' => $status,
-				'style' => $style,
-				'title' => $title,
-				'content' => $content,
-				'line' => $lnum 
-			});
-		}
-		$lnum++;
-		}
-	close(CONF);
-	return @rv;
+        if(defined $content){
+            $content =~ s/\\n/\n/g;  # unescape newlines
+            push(@rv, { 
+                'status' => $status,
+                'style' => $style,
+                'title' => $title,
+                'content' => $content,
+                'line' => $lnum 
+            });
+        }
+        $lnum++;
+    }
+    close(CONF);
+    return @rv;
 }
-
 
 sub create_note
 {
-	my ($note) = @_;
-	open_tempfile(CONF, ">>$config{'notes_conf'}");
-	print_tempfile(CONF, $note->{'status'}."|".$note->{'style'}."|".$note->{'title'}."|".$note->{'content'}."\n");
-	close_tempfile(CONF);
+    my ($note) = @_;
+    my $content = $note->{'content'};
+    $content =~ s/\n/\\n/g;   # Escape newlines
+    open_tempfile(CONF, ">>$config{'notes_conf'}");
+    print_tempfile(CONF, $note->{'status'}."|".$note->{'style'}."|".$note->{'title'}."|".$content."\n");
+    close_tempfile(CONF);
 }
-
 
 sub modify_note
 {
-	my ($note) = @_;
-	my $lref = read_file_lines($config{'notes_conf'});
-	$lref->[$note->{'line'}] = $note->{'status'}."|".$note->{'style'}."|".$note->{'title'}."|".$note->{'content'};
-	flush_file_lines($config{'notes_conf'});
+    my ($note) = @_;
+    my $content = $note->{'content'};
+    $content =~ s/\n/\\n/g;   # Escape newlines
+    my $lref = read_file_lines($config{'notes_conf'});
+    $lref->[$note->{'line'}] = $note->{'status'}."|".$note->{'style'}."|".$note->{'title'}."|".$content;
+    flush_file_lines($config{'notes_conf'});
 }
 
 sub delete_note
